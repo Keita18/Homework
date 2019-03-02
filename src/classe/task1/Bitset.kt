@@ -1,0 +1,8 @@
+package classe.task1
+
+
+fun main() {
+    val x = mutableListOf<Int>()
+    for (i in 0..10)
+        x.add(i)
+}
