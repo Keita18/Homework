@@ -1,16 +1,17 @@
 package classe.task1
 
 
-import java.lang.IndexOutOfBoundsException
-import java.util.*
 import kotlin.experimental.and
 import kotlin.experimental.or
 import kotlin.experimental.xor
-import kotlin.math.*
 import kotlin.math.min
 
+class HashtableException : Exception {
+    constructor() : super() {}
+    constructor(s: String) : super(s) {}
+}
 
-internal class Bitset {
+class Bitset {
     private var byteArray: ByteArray? = null     // the array of bytes (8-bit integers)
     private var maxSize: Int = 0           // max # of set elements allowed
 
@@ -20,14 +21,14 @@ internal class Bitset {
         byteArray = null
     }
 
-    constructor(size: Int) {
+    constructor(size: Int) {        //  the number of size requested foe the BitSet
         maxSize = size
         val nbyte = (size + 7) / 8
         byteArray = ByteArray(nbyte)          // new array, all zeroes
     }
 
 
-    constructor(setA: Bitset) {
+    constructor(setA: Bitset) {             //  this duplicate the existing BitSet
         maxSize = setA.maxSize
         val nbyte = setA.byteArray!!.size
         byteArray = ByteArray(nbyte)          // new array, all zeroes
@@ -35,52 +36,65 @@ internal class Bitset {
                 byteArray!!, 0, setA.byteArray!!.size)
     }
 
+    fun add(element: Int) {                      // this fun add element to the set
+        if (element in 0..(maxSize - 1)) {
 
-    fun clearElement(n: Int) {
-        if (n >= maxSize) throw IndexOutOfBoundsException()
+            val byteIndex = element / 8 //  piking the byte
+            val bitInByteIndex = element % 8  // piking the bits
+            this.byteArray!![byteIndex] = this.byteArray!![byteIndex] or (1 shl bitInByteIndex).toByte()
+        }
+    }
+
+    fun addMassive(elements: Set<Int>) {
+        val actualSize = maxSize - cardinality()
+        if (elements.size > actualSize) throw HashtableException("you can't not put all this elements in this set")
+        for (elemToAdd in elements) {
+            if (elemToAdd < this.maxSize && !contains(elemToAdd))
+                add(elemToAdd)
+        }
+    }
+
+    fun remove(n: Int) {  // this fun remove the value "n" from the array
+        if (n >= maxSize) throw HashtableException("element must always lower than maxSize")
         val whichByte = n / 8
         val whichBit = n % 8
         this.byteArray!![whichByte] = this.byteArray!![whichByte] and (1 shl whichBit xor 255).toByte()
     }
 
+    fun removeMassive(elements: Set<Int>) {
+        val cardinality = cardinality()
+        if (elements.size > cardinality) throw HashtableException("this set does'nt have many elements to remove")
+        for (elemToRem in elements)
+            if (elemToRem < this.maxSize && contains(elemToRem))
+                remove(elemToRem)
+    }
 
-    fun clear() {
-        if (byteArray == null)
-            error("clear: Can't clear a set that hasn't been constructed!")
+
+    fun clear() {  // this fun clear all element from set
+        if (byteArray == null) throw throw HashtableException("this set was not constructed ")
+
         for (i in byteArray!!.indices)
             byteArray!![i] = 0
     }
 
-    fun setSize(size: Int) {
-        maxSize = size
-        val nbyte = (size + 7) / 8
-        byteArray = ByteArray(nbyte)    // new array, all zeroes
-    }
-
-
-    operator fun contains(i: Int)  // same as member(), reads well:
-            : Boolean {                                // e.g., mySet.contains(3);
-        return if (i >= maxSize) false else {
+    operator fun contains(i: Int)  // this fun checks to see if element(i) is in set
+            : Boolean {
+        return if (i >= maxSize) false else {   // element must always lower than maxSize
             val whichByte = i / 8
             val whichBit = i % 8
-            this.byteArray!![whichByte].toInt() and (1 shl whichBit) != 0
+            this.byteArray!![whichByte].toInt() and (1 shl whichBit) != 0 // return true if that value in the set!
         }
     }
 
-
-    fun getSet(setA: Bitset): Bitset {
-        if (byteArray!!.size < setA.byteArray!!.size)
-            error("getSet: source set larger than dest. set")
-        clear()
-
-        val nbyte = setA.byteArray!!.size
+    fun intersect(setB: Bitset): Bitset {      // this fun makes a new set with values which are present in both
+        val temp = Bitset(min(maxSize, setB.maxSize))
+        val nbyte = min(byteArray!!.size, setB.byteArray!!.size)
         for (i in 0 until nbyte)
-        // copy byteArray from arg.
-            byteArray!![i] = setA.byteArray!![i]
-        return this                    // return receiver, updated
+            temp.byteArray!![i] = byteArray!![i] and setB.byteArray!![i]
+        return temp
     }
 
-    fun union(setB: Bitset): Bitset {
+    fun union(setB: Bitset): Bitset {           // this fun makes a new set with values from both sets
         val temp = Bitset(if (maxSize > setB.maxSize) this else setB)
 
         val nbyte = min(byteArray!!.size, setB.byteArray!!.size)
@@ -97,54 +111,39 @@ internal class Bitset {
         return temp
     }
 
-    fun intersect(setB: Bitset): Bitset {
-        val temp = Bitset(min(maxSize, setB.maxSize))
-        val nbyte = min(byteArray!!.size, setB.byteArray!!.size)
-        for (i in 0 until nbyte)
-            temp.byteArray!![i] = byteArray!![i] and setB.byteArray!![i]
-        return temp
-    }
 
-    fun equals(setB: Bitset): Boolean {
+    fun equals(Other: Bitset): Boolean {      // this fun verify if this set is equals to the other set
 
-        val nbyte = min(byteArray!!.size, setB.byteArray!!.size)
+        val minSize = min(byteArray!!.size, Other.byteArray!!.size) //  take of the shorter set
 
-        for (i in 0 until nbyte) {
-            if (byteArray!![i] != setB.byteArray!![i]) return false
+        for (i in 0 until minSize) {
+            if (byteArray!![i] != Other.byteArray!![i]) return false  // verify the both sets
         }
 
-        if (byteArray!!.size > nbyte) {
-            for (i in nbyte until byteArray!!.size) {
-                if (byteArray!![i].toInt() != 0) return false
+        // if the sizes are not the same///////////////////////
+        if (byteArray!!.size > minSize) {      // if this set bigger than other
+            for (i in minSize until byteArray!!.size) {     // check if there are other elements above the
+                if (byteArray!![i].toInt() != 0) return false     // maxSize of other
             }
         }
 
-        if (setB.byteArray!!.size > nbyte) {
-            for (i in nbyte until setB.byteArray!!.size) {
-                if (setB.byteArray!![i].toInt() != 0) return false
+        if (Other.byteArray!!.size > minSize) {          // do the same if other is bigger than this
+            for (i in minSize until Other.byteArray!!.size) {
+                if (Other.byteArray!![i].toInt() != 0) return false
             }
         }
         return true
     }
 
-    fun readSet(element: Int) {
-        if (element in 0..(maxSize - 1)) {
-
-            val whichByte = element / 8
-            val whichBit = element % 8
-            this.byteArray!![whichByte] = this.byteArray!![whichByte] or (1 shl whichBit).toByte()
-        }
-    }
-
-    override fun toString(): String {
-        var str = "{  "
+    override fun toString(): String {  // this fun creates the String representation
+        var str = "{ "
         for (i in 0 until maxSize) {
-            if (contains(i)) str += "$i  "
+            if (contains(i)) str += "$i "
         }
         return "$str}"
     }
 
-    fun cardinality(): Int {
+    fun cardinality(): Int {   // this fun return the number of elements in the set
         var count = 0
         for (i in 0 until maxSize) {
             if (contains(i)) count++
@@ -152,29 +151,4 @@ internal class Bitset {
         return count
     }
 
-    fun isSubset(b: Bitset): Boolean {
-        for (i in 0 until maxSize) {
-            if (contains(i) && !b.contains(i)) {
-                return false
-            }
-        }
-        return true
-    }
-
- private fun error(msg: String) {
-        print(" $msg")
-        System.exit(1)
-    }
-}
-
-fun main() {
-    val x = Bitset(8)
-    x.readSet(2)
-    x.readSet(3)
-    val y = Bitset(9)
-    y.readSet(5)
-    y.readSet(3)
-    y.clear()
-    println(y.toString())
-    println(y.contains(5))
 }
