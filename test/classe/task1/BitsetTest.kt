@@ -8,6 +8,7 @@ import org.junit.jupiter.api.assertThrows
 class HashtableException : Exception {
     constructor() : super() {}
     constructor(s: String) : super(s) {}
+
 }
 
 class BitsetTest {

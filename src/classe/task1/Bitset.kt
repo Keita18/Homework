@@ -9,6 +9,7 @@ import kotlin.math.min
 class HashtableException : Exception {
     constructor() : super() {}
     constructor(s: String) : super(s) {}
+
 }
 
 class Bitset {
