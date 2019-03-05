@@ -5,12 +5,6 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.junit.jupiter.api.assertThrows
 
-class HashtableException : Exception {
-    constructor() : super() {}
-    constructor(s: String) : super(s) {}
-
-}
-
 class BitsetTest {
     private val setA = Bitset(24)
     private val setB = Bitset(16)
@@ -35,7 +29,7 @@ class BitsetTest {
 
         assertEquals("{ 1 10 11 12 15 }", setB.toString())
         assertEquals("{ 17 19 21 23 }", setA.toString())
-        assertThrows<HashtableException> { setC.addMassive(setOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)) } // setCSize = 8
+        assertThrows<Exception> { setC.addMassive(setOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)) } // setCSize = 8
     }
 
     @Test
@@ -51,7 +45,7 @@ class BitsetTest {
     @Test
     fun removeMassive() {
         setA.addMassive(setOf(1, 2, 3, 4, 5))
-        assertThrows<HashtableException> { setA.removeMassive(setOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)) }
+        assertThrows<Exception> { setA.removeMassive(setOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)) }
         setA.removeMassive(setOf(2, 3, 4))
         assertEquals("{ 1 5 }", setA.toString())
     }
@@ -80,10 +74,10 @@ class BitsetTest {
         setA.addMassive(setOf(1, 2, 3, 4, 5, 6, 7))
         setB.addMassive(setOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15))
         setC.addMassive(setOf(5, 6, 7))
-        assertEquals(setC, setA.intersect(setB))
+        assertTrue(setC.equals(setA.intersect(setB)))
         setB.remove(6)
         setC.remove(6)
-        assertEquals(setC, setB.intersect(setA))
+        assertTrue(setC.equals(setB.intersect(setA)))
     }
 
     @Test
@@ -91,7 +85,7 @@ class BitsetTest {
         setA.addMassive(setOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15))
         setB.addMassive(setOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15))
         setC.addMassive(setOf(1, 2, 3, 4, 5, 6, 7))
-        assertEquals(setA, setB.union(setC))
+        assertTrue(setA.equals(setB.union(setC)))
     }
 
     @Test
