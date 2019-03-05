@@ -5,6 +5,7 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.junit.jupiter.api.assertThrows
 
+
 class BitsetTest {
     private val setA = Bitset(24)
     private val setB = Bitset(16)
