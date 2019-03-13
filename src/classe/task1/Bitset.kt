@@ -1,5 +1,6 @@
 package classe.task1
-
+import java.io.File
+import java.lang.IllegalArgumentException
 import kotlin.experimental.and
 import kotlin.experimental.or
 import kotlin.experimental.xor

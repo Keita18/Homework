@@ -4,8 +4,6 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.jupiter.api.assertThrows
-import java.io.File
-import java.lang.IllegalArgumentException
 
 
 class BitsetTest {
@@ -119,52 +117,4 @@ class BitsetTest {
         setA.remove(0)
         assertEquals(10, setA.cardinality())
     }
-}
-
-fun searchFile(name: String, directory: File): MutableList<File> {
-    val result = mutableListOf<File>()
-    if (!directory.isDirectory) throw IllegalArgumentException()
-
-    for (temp in directory.listFiles()) {
-        if (temp.name == name) {
-            result.add(temp.absoluteFile)
-            if (result.isNotEmpty())
-                break
-        } else if (temp.isDirectory) {
-            val answr = searchFile(name, temp)
-
-            if (answr.isNotEmpty())
-
-                result.add(answr.first())
-        }
-    }
-
-    return result
-}
-fun use(name: String): Any {
-
-    val paths = searchFile(name, File("C:\\Users\\User\\Desktop\\KotlinAsFirst2018")).first().absoluteFile
-    return getSize(paths)
-
-}
-fun getSize(directory: File): Long {
-
-    var length: Long = 0
-    if (!directory.isDirectory) {
-        length = directory.length()
-    } else if (directory.isDirectory) {
-
-        for (file in directory.listFiles()) {
-            length += if (file.isFile)
-                file.length()
-            else
-                getSize(file)
-        }
-    }
-    return length
-}
-
-fun main(args: Array<String>) {
-    val x = use("input")
-    println(x)
 }
