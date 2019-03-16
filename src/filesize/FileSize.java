@@ -85,7 +85,7 @@ class FileSize {
         return true;
     }
 
-    private void displaySelectedMenu(int nbMenu) {
+    private void display(int nbMenu) {
         switch (nbMenu) {
             case 1:
                 System.out.println("Put the names of files and Type DONE when all files done!");
@@ -116,7 +116,7 @@ class FileSize {
             } catch (NumberFormatException e) {
                 i = -1;
             }
-            this.displaySelectedMenu(i);
+            this.display(i);
             String nameFile;
              switch (i) {
                  case 1:
