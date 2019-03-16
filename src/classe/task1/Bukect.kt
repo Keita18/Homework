@@ -1,8 +1,5 @@
 package classe.task1
 
-import com.sun.org.apache.xml.internal.utils.StringBufferPool.free
-import com.sun.org.apache.xml.internal.utils.StringBufferPool.free
-import com.sun.org.apache.xml.internal.utils.StringBufferPool.free
 import kotlin.math.abs
 
 
@@ -174,11 +171,5 @@ class HashTable : SymbolTable {
     }
 }
 
-fun main() {
-    val setA = HashTable(4)
-    setA.put(1, 3)
-    setA.put(2,16)
-    setA.remove(1)
-    println(setA.contains(1))
-}
+
 

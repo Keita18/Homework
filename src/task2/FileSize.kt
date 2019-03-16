@@ -1,17 +1,11 @@
 package task2
 
-import com.sun.deploy.config.JREInfo.clear
-import sun.rmi.runtime.Log
-import java.io.Console
+import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.PrintStream
-import java.lang.IllegalArgumentException
-import java.util.*
-import kotlin.math.sqrt
 
 class FileSize {
     private val result = mutableMapOf<String, Long>()
-    val directory = mutableListOf<String>()
+    private var baseByte = 1024
     private var baseDirectory: File = File("C:\\Users\\User\\Desktop\\KotlinAsFirst2018")
 
     /**
@@ -28,7 +22,7 @@ class FileSize {
      * search the file path or directory path
      */
 
-    private fun searchFile(name: String, directory: File): MutableList<File> {
+    fun searchFile(name: String, directory: File): MutableList<File> {
         val result = mutableListOf<File>()
         if (!directory.isDirectory) {
             if (directory.isFile)
@@ -54,7 +48,7 @@ class FileSize {
     /**
      * return the file's size or directory's size
      */
-    private fun getSize(directory: File): Long {
+    fun getSize(directory: File): Long {
 
         var length: Long = 0
         if (!directory.isDirectory) {
@@ -80,7 +74,7 @@ class FileSize {
         return true
     }
 
-    private fun convertiser(kiloByte: Long, base: Int = 1024): String {
+    private fun convertiser(kiloByte: Long, base: Int): String {
         val byte = kiloByte.toDouble() * base
         val megaB = kiloByte.toDouble() / base
         val gigaB = kiloByte / Math.pow(kiloByte.toDouble(), 2.0)
@@ -97,7 +91,6 @@ class FileSize {
         var i = 5
         println("Welcome to FileFolderSearcher\n" +
                 "the currently file is: $baseDirectory")
-
         do {
             println("Press")
             println("1 - to find in this directory")
@@ -133,19 +126,22 @@ class FileSize {
                         boolean = true
                         for ((file, sizeFile) in result) {
                             nameFile = file
-                            size = convertiser(sizeFile)
+                            size = convertiser(sizeFile, baseByte)
                             println("$nameFile : $size")
                         }
                     }
                     if (sc == "-c") {
                         nameFile = result.keys.toList().joinToString()
                         if (boolean) {
-                            size = convertiser(result.values.sum())
+                            size = convertiser(result.values.sum(), baseByte)
                             println("sum of sizes : $nameFile = $size")
                         } else {
                             size = (result.values.sum().toDouble()).toString()
                             println("sum of sizes : $nameFile = $size KB")
                         }
+                    }
+                    if (sc == "--si") {
+                        this.baseByte = 1000
                     }
 
                 } while (sc != "DONE")
@@ -196,6 +192,4 @@ class FileSize {
 }
 
 fun main() {
-    val x = FileSize()
-    x.runMenu()
 }
