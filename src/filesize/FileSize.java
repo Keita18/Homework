@@ -81,7 +81,7 @@ class FileSize {
         if (searchFile(name, baseDirectory).isEmpty())
             return false;
         File paths = searchFile(name, baseDirectory).get(0).getAbsoluteFile();
-        result.put(name, getSize(paths) / 1024);
+        result.put(name, getSize(paths) / baseByte);
         return true;
     }
 
@@ -117,7 +117,7 @@ class FileSize {
                 i = -1;
             }
             if (i == -0 )
-                break;
+                return;
             this.display(i);
             String nameFile;
              switch (i) {
@@ -126,7 +126,7 @@ class FileSize {
                      do {
                          nameFile = sc.next();
                          if (nameFile.equals("-0"))
-                            break;
+                            return;
                          fileExist = use(nameFile);
                          if (nameFile.equals("DONE"))
                              break;
@@ -135,9 +135,9 @@ class FileSize {
                              System.out.println("type DONE when all done!");
                          }
                      } while (!nameFile.equals("DONE"));
-                     if (result.isEmpty() || nameFile.equals("-0")) {
-                         if (result.isEmpty()) System.err.println("you did not type any file");
-                         break;
+                     if (result.isEmpty()) {
+                         System.err.println("you did not type any file");
+                         return;
                      } else
 
                      this.displayAvailableFun();
@@ -148,7 +148,7 @@ class FileSize {
 
                          j = sc.next();
                          if (j.equals("-0"))
-                             break;
+                             return;
                          switch (j) {
                              case "-h":
                                  comandAlready = true;
@@ -186,7 +186,7 @@ class FileSize {
                      do {
                          input = sc.next();
                          if (input.equals("-0"))
-                            break;
+                            return;
                          if (new File(input).canRead())
                              this.baseDirectory = new  File(input);
                          else {
@@ -195,8 +195,6 @@ class FileSize {
                              fileCanRead = false;
                          }
                      } while (!fileCanRead);
-                     if (input.equals("-0"))
-                         break;
                          runMenu();
              }
 

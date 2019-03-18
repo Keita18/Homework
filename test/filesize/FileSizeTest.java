@@ -29,12 +29,9 @@ class FileSizeTest {
     @Test
     void runMenu() {
         System.setIn(new ByteArrayInputStream("1\nIrodov.pdf\nDONE\n-c\n-h\n-c\n--si\n-h\n-c\n-0\n".getBytes()));
-
         fileSize = new FileSize();
         fileSize.runMenu();
         String[] output = outContent.toString().replace("\r\n", "\n").split("\n");
-        System.out.println(output.length);
-
 
         assertEquals("Put the names of files and Type DONE when all files done!", output[6]);
         assertEquals("TYPE", output[7]);
@@ -46,5 +43,14 @@ class FileSizeTest {
         assertEquals("sum of sizes : [Irodov.pdf] = 17.23046875 MB", output[13]);
         assertEquals("Irodov.pdf : 17.644 MB", output[14]);
         assertEquals("sum of sizes : [Irodov.pdf] = 17.644 MB", output[15]);
+    }
+    @Test
+    void run(){
+        System.setIn(new ByteArrayInputStream("2\n33\n-0\nIrodov.pdf\nDONE\n-c\n-h\n-c\n--si\n-h\n-c\n-0\n".getBytes()));
+
+        fileSize = new FileSize();
+        fileSize.runMenu();
+        String[] output = outContent.toString().replace("\r\n", "\n").split("\n");
+        assertNotEquals("yyyyyyyy", Arrays.toString(output));
     }
 }
