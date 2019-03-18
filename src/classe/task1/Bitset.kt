@@ -97,31 +97,33 @@ class Bitset {
         return temp
     }
 
+    override fun hashCode(): Int = Arrays.hashCode(byteArray) + maxSize
 
-    fun equals(Other: Bitset): Boolean {      // this fun verify if this set is equals to the other set
 
-        val minSize = min(byteArray.size, Other.byteArray.size) //  take of the shorter set
+    override fun equals(other: Any?): Boolean {      // this fun verify if this set is equals to the other set
+        if (other !is Bitset) return false
+        else {
+            val minSize = min(byteArray.size, other.byteArray.size) //  take of the shorter set
 
-        for (i in 0 until minSize) {
-            if (byteArray[i] != Other.byteArray[i]) return false  // verify the both sets
-        }
-
-        // if the sizes are not the same///////////////////////
-        if (byteArray.size > minSize) {      // if this set bigger than other
-            for (i in minSize until byteArray.size) {     // check if there are other elements above the
-                if (byteArray[i].toInt() != 0) return false     // maxSize of other
+            for (i in 0 until minSize) {
+                if (byteArray[i] != other.byteArray[i]) return false  // verify the both sets
             }
-        }
 
-        if (Other.byteArray.size > minSize) {          // do the same if other is bigger than this
-            for (i in minSize until Other.byteArray.size) {
-                if (Other.byteArray[i].toInt() != 0) return false
+            // if the sizes are not the same///////////////////////
+            if (byteArray.size > minSize) {      // if this set bigger than other
+                for (i in minSize until byteArray.size) {     // check if there are other elements above the
+                    if (byteArray[i].toInt() != 0) return false     // maxSize of other
+                }
+            }
+
+            if (other.byteArray.size > minSize) {          // do the same if other is bigger than this
+                for (i in minSize until other.byteArray.size) {
+                    if (other.byteArray[i].toInt() != 0) return false
+                }
             }
         }
         return true
     }
-
-    override fun hashCode(): Int = Arrays.hashCode(byteArray) + maxSize
 
     override fun toString(): String {  // this fun creates the String representation
         var str = "{ "
