@@ -106,7 +106,7 @@ class FileSize {
         System.out.println("Press");
         System.out.println("1 - to find in this directory");
         System.out.println("2 - to change directory");
-        System.out.println("0 - at any time to exit of the system");
+        System.out.println("-0 - at any time to exit of the system");
         int i;
         String input;
         do {
@@ -116,6 +116,8 @@ class FileSize {
             } catch (NumberFormatException e) {
                 i = -1;
             }
+            if (i == -0 )
+                break;
             this.display(i);
             String nameFile;
              switch (i) {
@@ -123,8 +125,8 @@ class FileSize {
                      boolean fileExist;
                      do {
                          nameFile = sc.next();
-                         if (nameFile.equals("0"))
-                             System.exit(0);
+                         if (nameFile.equals("-0"))
+                            break;
                          fileExist = use(nameFile);
                          if (nameFile.equals("DONE"))
                              break;
@@ -133,10 +135,10 @@ class FileSize {
                              System.out.println("type DONE when all done!");
                          }
                      } while (!nameFile.equals("DONE"));
-                     if (result.isEmpty()) {
-                         System.err.println("you did not type any file");
-                         System.exit(1);
-                     }
+                     if (result.isEmpty() || nameFile.equals("-0")) {
+                         if (result.isEmpty()) System.err.println("you did not type any file");
+                         break;
+                     } else
 
                      this.displayAvailableFun();
                      String j;
@@ -145,8 +147,8 @@ class FileSize {
                      do {
 
                          j = sc.next();
-                         if (j.equals("0"))
-                             System.exit(0);
+                         if (j.equals("-0"))
+                             break;
                          switch (j) {
                              case "-h":
                                  comandAlready = true;
@@ -177,14 +179,14 @@ class FileSize {
                                  System.err.println("Please choose command proposed");
                                  displayAvailableFun();
                          }
-                     } while (true);
-
+                     } while (!j.equals("-0"));
+                     break;
                  case 2:
                      boolean fileCanRead = true;
                      do {
                          input = sc.next();
-                         if (input.equals("0"))
-                             System.exit(0);
+                         if (input.equals("-0"))
+                            break;
                          if (new File(input).canRead())
                              this.baseDirectory = new  File(input);
                          else {
@@ -193,13 +195,16 @@ class FileSize {
                              fileCanRead = false;
                          }
                      } while (!fileCanRead);
-                     runMenu();
+                     if (input.equals("-0"))
+                         break;
+                         runMenu();
              }
 
 
         } while (i < 0 || i > 3);
 
     }
+
 }
 
 class Main {

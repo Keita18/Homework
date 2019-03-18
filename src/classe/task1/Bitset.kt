@@ -1,6 +1,6 @@
 package classe.task1
-import java.io.File
-import java.lang.IllegalArgumentException
+
+import java.util.*
 import kotlin.experimental.and
 import kotlin.experimental.or
 import kotlin.experimental.xor
@@ -11,6 +11,7 @@ class Bitset {
     private var maxSize: Int = 0           // max # of set elements allowed
 
     constructor(size: Int) {        //  the number of size requested foe the BitSet
+        require(size > 0) { "size must be greater than 0" }
         maxSize = size
         val nbyte = (size + 7) / 8
         byteArray = ByteArray(nbyte)          // new array, all zeroes
@@ -26,6 +27,7 @@ class Bitset {
     }
 
     fun add(element: Int) {                      // this fun add element to the set
+        require(element in 0 until maxSize) { "element must be between 0 and size" }
         if (element in 0..(maxSize - 1)) {
 
             val byteIndex = element / 8 //  piking the byte
@@ -35,16 +37,13 @@ class Bitset {
     }
 
     fun addMassive(elements: Set<Int>) {
-        val actualSize = maxSize - cardinality()
-        if (elements.size >= actualSize) throw Exception("you can't not put all this elements in this set")
         for (elemToAdd in elements) {
-            if (elemToAdd < this.maxSize && !contains(elemToAdd))
-                add(elemToAdd)
+            add(elemToAdd)
         }
     }
 
     fun remove(n: Int) {  // this fun remove the value "n" from the array
-        if (n >= maxSize) throw Exception("element must always lower than maxSize")
+        if (n >= maxSize || n < 0) throw Exception("element must always be positive and lower than maxSize")
         val whichByte = n / 8
         val whichBit = n % 8
         this.byteArray[whichByte] = this.byteArray[whichByte] and (1 shl whichBit xor 255).toByte()
@@ -54,8 +53,7 @@ class Bitset {
         val cardinality = cardinality()
         if (elements.size > cardinality) throw Exception("this set does'nt have many elements to remove")
         for (elemToRem in elements)
-            if (elemToRem < this.maxSize && contains(elemToRem))
-                remove(elemToRem)
+            remove(elemToRem)
     }
 
 
@@ -123,6 +121,8 @@ class Bitset {
         return true
     }
 
+    override fun hashCode(): Int = Arrays.hashCode(byteArray) + maxSize
+
     override fun toString(): String {  // this fun creates the String representation
         var str = "{ "
         for (i in 0 until maxSize) {
@@ -134,8 +134,11 @@ class Bitset {
     fun cardinality(): Int {   // this fun return the number of elements in the set
         var count = 0
         for (i in 0 until maxSize) {
-            if (contains(i)) count++
+            if (contains(i))
+                count++
         }
+
+        //val c = Integer.bitCount(result.first())
         return count
     }
 
