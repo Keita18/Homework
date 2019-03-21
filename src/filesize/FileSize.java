@@ -26,35 +26,45 @@ class FileSize {
      * This fun convert file size to kiloByte , megaByte..
      * baseByte define the conversion base { 1 KB = 1000 B or 1 KB = 1024 B}
      */
-    private String converter(Long kiloByte, Integer baseByte) {
-        double bytes = kiloByte.doubleValue() * baseByte;
-        double megaB = kiloByte.doubleValue() / baseByte;
-        double gigaB = kiloByte / Math.pow(kiloByte.doubleValue(), 2.0);
-        if (bytes < 1000) return bytes + " B";
-        else if (gigaB > 0.9) return gigaB + " GB";
-        else if (megaB > 0.9) return megaB + " MB";
-        else return kiloByte + " KB";
+    private String converter(Long bytes, Integer baseByte) {
+        double kiloB = bytes.doubleValue() / baseByte;
+        double megaB = bytes.doubleValue() / Math.pow(baseByte.doubleValue(), 2.0);
+        double gigaB = bytes / Math.pow(baseByte.doubleValue(), 3.0);
+
+        if (gigaB > 0.9) return round(gigaB) + " GB";
+        else if (megaB > 0.9) return round(megaB) + " MB";
+        else if (kiloB > 0.9) return round(kiloB) + " KB";
+        else return bytes + " B";
+
+    }
+   private double round(double A) {
+        return (double) ( (int) (A * Math.pow(10, 2) + .5)) / Math.pow(10, 2);
     }
 
     private ArrayList<File> searchFile(String name, File baseDirectory) {
         ArrayList<File> result = new ArrayList<>();
-        if (!baseDirectory.isDirectory()) {
-            if (baseDirectory.isFile())
-                result.add(baseDirectory);
-        } else {
-            for (File temp : Objects.requireNonNull(baseDirectory.listFiles())) {
-                if (temp.getName().equals(name)) {
-                    result.add(temp.getAbsoluteFile());
-                    if (!result.isEmpty())
-                        break;
-                } else if (temp.isDirectory()) {
-                    ArrayList<File> answr = searchFile(name, temp);
+        try {
+            if (!baseDirectory.isDirectory()) {
+                if (baseDirectory.isFile())
+                    result.add(baseDirectory);
+            } else {
+                for (File temp : Objects.requireNonNull(baseDirectory.listFiles())) {
+                    if (temp.getName().equals(name)) {
+                        result.add(temp.getAbsoluteFile());
+                        if (!result.isEmpty())
+                            break;
+                    } else if (temp.isDirectory()) {
+                        ArrayList<File> answr = searchFile(name, temp);
 
-                    if (!answr.isEmpty())
+                        if (!answr.isEmpty())
 
-                        result.add(answr.get(0));
+                            result.add(answr.get(0));
+                    }
                 }
             }
+
+        } catch (Exception ignored) {
+
         }
         return result;
     }
@@ -81,7 +91,7 @@ class FileSize {
         if (searchFile(name, baseDirectory).isEmpty())
             return false;
         File paths = searchFile(name, baseDirectory).get(0).getAbsoluteFile();
-        result.put(name, getSize(paths) / baseByte);
+        result.put(name, getSize(paths));
         return true;
     }
 
@@ -101,12 +111,13 @@ class FileSize {
     }
 
     void runMenu() {
-        System.out.println("Welcome to FileFolderSearcher\n" +
-                "the currently file is:" + baseDirectory);
+        System.out.println("\n-----Welcome to FileFolderSearcher-----");
+        System.out.println("----------------------------------------");
+        System.out.println("--> the currently file is:" + baseDirectory);
         System.out.println("Press");
-        System.out.println("1 - to find in this directory");
-        System.out.println("2 - to change directory");
-        System.out.println("-0 - at any time to exit of the system");
+        System.out.println("-> 1 : to find in this directory");
+        System.out.println("-> 2 : to change directory");
+        System.out.println("-> -0 : at any time to exit of the system");
         int i;
         String input;
         do {
@@ -132,7 +143,7 @@ class FileSize {
                              break;
                          if (!fileExist) {
                              System.err.println("this file can't found; put the correct file or type 0 to exit!");
-                             System.out.println("type DONE when all done!");
+                             System.out.println("\ntype DONE when all done!");
                          }
                      } while (!nameFile.equals("DONE"));
                      if (result.isEmpty()) {
@@ -168,7 +179,7 @@ class FileSize {
                                      size = converter(sum, baseByte);
                                      System.out.println("sum of sizes : " + nameFile + " = " + size);
                                  } else {
-                                     size = sum + "";
+                                     size = String.valueOf(sum / baseByte);
                                      System.out.println("sum of sizes : " + nameFile + " = " + size + " KB");
                                  }
                                  break;

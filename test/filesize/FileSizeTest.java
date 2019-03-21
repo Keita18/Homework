@@ -39,10 +39,10 @@ class FileSizeTest {
         assertEquals("-c : sum of sizes", output[9]);
         assertEquals("--si : to take 1000 as units of measurement", output[10]);
         assertEquals("sum of sizes : [Irodov.pdf] = 17644 KB", output[11]);
-        assertEquals("Irodov.pdf : 17.23046875 MB", output[12]);
-        assertEquals("sum of sizes : [Irodov.pdf] = 17.23046875 MB", output[13]);
-        assertEquals("Irodov.pdf : 17.644 MB", output[14]);
-        assertEquals("sum of sizes : [Irodov.pdf] = 17.644 MB", output[15]);
+        assertEquals("Irodov.pdf : 17.23 MB", output[12]);
+        assertEquals("sum of sizes : [Irodov.pdf] = 17.23 MB", output[13]);
+        assertEquals("Irodov.pdf : 18.07 MB", output[14]);
+        assertEquals("sum of sizes : [Irodov.pdf] = 18.07 MB", output[15]);
     }
     @Test
     void run(){
