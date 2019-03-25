@@ -7,33 +7,31 @@ import kotlin.experimental.xor
 import kotlin.math.min
 
 class Bitset {
-    private var byteArray: ByteArray    // the array of bytes (8-bit integers)
-    private var maxSize: Int = 0           // max # of set elements allowed
+    private var byteArray: ByteArray                                 // the array of bytes (8-bit integers)
+    private var maxSize: Int = 0                                    // max # of set elements allowed
 
-    constructor(size: Int) {        //  the number of size requested foe the BitSet
+    constructor(size: Int) {                                      //  the number of size requested foe the BitSet
         require(size > 0) { "size must be greater than 0" }
         maxSize = size
         val nbyte = (size + 7) / 8
-        byteArray = ByteArray(nbyte)          // new array, all zeroes
+        byteArray = ByteArray(nbyte)                           // new array, all zeroes
     }
 
 
-    constructor(setA: Bitset) {             //  this duplicate the existing BitSet
+    constructor(setA: Bitset) {                                   //  this duplicate the existing BitSet
         maxSize = setA.maxSize
         val nbyte = setA.byteArray.size
-        byteArray = ByteArray(nbyte)          // new array, all zeroes
+        byteArray = ByteArray(nbyte)                            // new array, all zeroes
         System.arraycopy(setA.byteArray, 0,
                 byteArray, 0, setA.byteArray.size)
     }
 
-    fun add(element: Int) {                      // this fun add element to the set
-        require(element in 0 until maxSize) { "element must be between 0 and size" }
-        if (element in 0..(maxSize - 1)) {
+    fun add(element: Int) {                                  // this fun add element to the set
+        require(element in 0 until maxSize) { "element must be between 0 and maxSize" }
 
-            val byteIndex = element / 8 //  piking the byte
-            val bitInByteIndex = element % 8  // piking the bits
-            this.byteArray[byteIndex] = this.byteArray[byteIndex] or (1 shl bitInByteIndex).toByte()
-        }
+        val byteIndex = element / 8                        //  piking the byte
+        val bitInByteIndex = element % 8                  // piking the bits
+        this.byteArray[byteIndex] = this.byteArray[byteIndex] or (1 shl bitInByteIndex).toByte()
     }
 
     fun addMassive(elements: Set<Int>) {
@@ -42,8 +40,8 @@ class Bitset {
         }
     }
 
-    fun remove(n: Int) {  // this fun remove the value "n" from the array
-        if (n >= maxSize || n < 0) throw Exception("element must always be positive and lower than maxSize")
+    fun remove(n: Int) {                        // this fun remove the value "n" from the array
+        require(n in 0 until maxSize) { "element must be between 0 and maxSize" }
         val whichByte = n / 8
         val whichBit = n % 8
         this.byteArray[whichByte] = this.byteArray[whichByte] and (1 shl whichBit xor 255).toByte()
@@ -58,21 +56,19 @@ class Bitset {
 
 
     fun clear() {  // this fun clear all element from set
-        if (cardinality() == 0) throw throw Exception("this set was not constructed ")
+        if (cardinality() == 0) throw Exception("this set was not constructed ")
         for (i in byteArray.indices)
             byteArray[i] = 0
     }
 
-    operator fun contains(i: Int)  // this fun checks to see if element(i) is in set
-            : Boolean {
-        return if (i >= maxSize) false else {   // element must always lower than maxSize
-            val whichByte = i / 8
-            val whichBit = i % 8
-            this.byteArray[whichByte].toInt() and (1 shl whichBit) != 0 // return true if that value in the set!
-        }
+    operator fun contains(i: Int): Boolean {                       // this fun checks to see if element(i) is in set
+        if (i >= maxSize || i < 0) return false
+        val whichByte = i / 8
+        val whichBit = i % 8
+        return this.byteArray[whichByte].toInt() and (1 shl whichBit) != 0 // return true if that value in the set!
     }
 
-    fun intersect(setB: Bitset): Bitset {      // this fun makes a new set with values which are present in both
+    fun intersect(setB: Bitset): Bitset {            // this fun makes a new set with values which are present in both
         val temp = Bitset(min(maxSize, setB.maxSize))
         val nbyte = min(byteArray.size, setB.byteArray.size)
         for (i in 0 until nbyte)
@@ -80,7 +76,7 @@ class Bitset {
         return temp
     }
 
-    fun union(setB: Bitset): Bitset {           // this fun makes a new set with values from both sets
+    fun union(setB: Bitset): Bitset {                       // this fun makes a new set with values from both sets
         val temp = Bitset(if (maxSize > setB.maxSize) this else setB)
 
         val nbyte = min(byteArray.size, setB.byteArray.size)
@@ -100,28 +96,27 @@ class Bitset {
     override fun hashCode(): Int = Arrays.hashCode(byteArray) + maxSize
 
 
-    override fun equals(other: Any?): Boolean {      // this fun verify if this set is equals to the other set
+    override fun equals(other: Any?): Boolean {               // this fun verify if this set is equals to the other set
         if (other !is Bitset) return false
-        else {
-            val minSize = min(byteArray.size, other.byteArray.size) //  take of the shorter set
 
-            for (i in 0 until minSize) {
-                if (byteArray[i] != other.byteArray[i]) return false  // verify the both sets
+        val minSize = min(byteArray.size, other.byteArray.size)            //  take of the shorter set
+        for (i in 0 until minSize) {
+                if (byteArray[i] != other.byteArray[i]) return false     // verify the both sets
             }
 
-            // if the sizes are not the same///////////////////////
-            if (byteArray.size > minSize) {      // if this set bigger than other
-                for (i in minSize until byteArray.size) {     // check if there are other elements above the
+            //---------- if the sizes are not the same ----------
+        if (byteArray.size > minSize) {                               // if this set bigger than other
+                for (i in minSize until byteArray.size) {            // check if there are other elements above the
                     if (byteArray[i].toInt() != 0) return false     // maxSize of other
                 }
             }
 
-            if (other.byteArray.size > minSize) {          // do the same if other is bigger than this
+        if (other.byteArray.size > minSize) {                   // do the same if other is bigger than this
                 for (i in minSize until other.byteArray.size) {
                     if (other.byteArray[i].toInt() != 0) return false
                 }
             }
-        }
+
         return true
     }
 
