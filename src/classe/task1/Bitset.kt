@@ -7,7 +7,6 @@ import kotlin.experimental.xor
 import kotlin.math.min
 
 class Bitset {
-
     private var byteArray: ByteArray                                 // the array of bytes (8-bit integers)
     private var maxSize: Int = 0                                    // max # of set elements allowed
 
@@ -49,8 +48,7 @@ class Bitset {
     }
 
     fun removeMassive(elements: Set<Int>) {
-        val cardinality = cardinality()
-        if (elements.size > cardinality) throw Exception("this set does'nt have many elements to remove")
+
         for (elemToRem in elements)
             remove(elemToRem)
     }
@@ -131,12 +129,22 @@ class Bitset {
 
     fun cardinality(): Int {   // this fun return the number of elements in the set
         var count = 0
-        for (i in 0 until maxSize) {
-            if (contains(i))
-                count++
+        for (elem in byteArray) {
+            count += countBits(elem)
         }
-
-        //val c = Integer.bitCount(result.first())
         return count
+    }
+
+    private fun countBits(test: Byte): Int {
+        var i = test
+
+        val mask1: Byte = 0b01010101
+        val mask2: Byte = 0b00110011
+        val mask3: Byte = 0b00001111
+
+        i = ((i and mask1) + ((i.toInt() ushr 1).toByte() and mask1)).toByte()
+        i = ((i and mask2) + ((i.toInt() ushr 2).toByte() and mask2)).toByte()
+        i = ((i and mask3) + ((i.toInt() ushr(4)).toByte() and mask3)).toByte()
+        return i.toInt()
     }
 }
