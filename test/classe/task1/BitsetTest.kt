@@ -9,7 +9,6 @@ import kotlin.test.assertEquals
 
 
 class BitsetTest {
-
     private val setA = Bitset(24)
     private val setB = Bitset(16)
     private val setC = Bitset(8)

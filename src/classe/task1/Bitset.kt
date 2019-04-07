@@ -7,6 +7,7 @@ import kotlin.experimental.xor
 import kotlin.math.min
 
 class Bitset {
+
     private var byteArray: ByteArray                                 // the array of bytes (8-bit integers)
     private var maxSize: Int = 0                                    // max # of set elements allowed
 
