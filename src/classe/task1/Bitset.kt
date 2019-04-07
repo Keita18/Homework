@@ -138,5 +138,4 @@ class Bitset {
         //val c = Integer.bitCount(result.first())
         return count
     }
-
 }

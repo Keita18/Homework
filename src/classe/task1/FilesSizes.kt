@@ -8,11 +8,6 @@ import java.io.File
 import java.util.*
 
 
-enum class STANDARD {
-    JEDEC , //1024
-    IEC    //1000
-}
-
 class FilesSizes (listFilesStr: List<String>) {
     private val listFiles: MutableSet<File>
     var readable: Boolean = false

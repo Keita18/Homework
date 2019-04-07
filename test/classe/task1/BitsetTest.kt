@@ -1,15 +1,15 @@
 package classe.task1
 
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.jupiter.api.assertThrows
 import java.io.File
-import java.lang.IllegalArgumentException
 import kotlin.test.assertEquals
 
 
 class BitsetTest {
+
     private val setA = Bitset(24)
     private val setB = Bitset(16)
     private val setC = Bitset(8)
