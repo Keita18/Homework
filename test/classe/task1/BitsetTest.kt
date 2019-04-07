@@ -6,6 +6,7 @@ import org.junit.Assert.*
 import org.junit.jupiter.api.assertThrows
 import java.io.File
 import java.lang.IllegalArgumentException
+import kotlin.test.assertEquals
 
 
 class BitsetTest {

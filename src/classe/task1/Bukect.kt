@@ -172,4 +172,9 @@ class HashTable : SymbolTable {
 }
 
 
-
+fun main(args: Array<String>) {
+     fun isValidChar(c: Char): Boolean {
+        return Character.isJavaIdentifierPart(c)
+    }
+    println(isValidChar('-'))
+}

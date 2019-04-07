@@ -41,7 +41,7 @@ class FileSize {
         return (double) ( (int) (A * Math.pow(10, 2) + .5)) / Math.pow(10, 2);
     }
 
-    private ArrayList<File> searchFile(String name, File baseDirectory) {
+   public ArrayList<File> searchFile(String name, File baseDirectory) {
         ArrayList<File> result = new ArrayList<>();
         try {
             if (!baseDirectory.isDirectory()) {
@@ -69,7 +69,7 @@ class FileSize {
         return result;
     }
 
-    private Long getSize(File directory) {
+   public Long getSize(File directory) {
 
         long length = 0;
         if (!directory.isDirectory()) {
@@ -221,5 +221,7 @@ class Main {
     public static void main(String[] args) {
         FileSize x = new FileSize();
         x.runMenu();
+
+
     }
 }
