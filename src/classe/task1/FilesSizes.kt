@@ -1,4 +1,3 @@
-package classe.task1
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Option
