@@ -131,13 +131,6 @@ object CommandLine {
         } catch (e: Exception) {
             System.err.println(e.message)
 
-            try {
-                Thread.sleep(2000L)
-            } catch (ex: InterruptedException) {
-                Thread.currentThread().interrupt()
-                throw RuntimeException(ex)
-            }
-
             System.exit(1)
         }
     }
