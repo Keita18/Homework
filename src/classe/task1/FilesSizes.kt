@@ -8,7 +8,7 @@ import java.util.*
 
 class FilesSizes (listFilesStr: List<String>) {
 
-    private val listFiles: MutableSet<File>
+    private val listFiles: MutableSet<File> //fffff
     var readable: Boolean = false
     var standard: Int = 1024
 
