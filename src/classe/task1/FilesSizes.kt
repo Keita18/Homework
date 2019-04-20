@@ -24,16 +24,14 @@ class FilesSizes (listFilesStr: List<String>, private val readable: Boolean, pri
             listFiles.add(tmpFile)
         }
     }
+
     fun getFileSize(file: File): Long {
 
         val listFiles = file.listFiles() ?: return file.length()
 
         var result: Long = 0
         for (someFile in listFiles)
-            result += if (someFile.isFile)
-                someFile.length()
-            else
-                getFileSize(someFile)
+            result +=  getFileSize(someFile)
 
         return result
     }
