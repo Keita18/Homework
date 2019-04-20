@@ -1,16 +1,13 @@
+
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import java.io.File
-import java.util.*
 
+class FilesSizes (listFilesStr: List<String>, private val readable: Boolean, private val standard: Int) {
 
-class FilesSizes (listFilesStr: List<String>) {
-
-    private val listFiles: MutableSet<File> //fffff
-    var readable: Boolean = false
-    var standard: Int = 1024
+    private val listFiles: MutableSet<File>
 
     init {
 
@@ -22,12 +19,12 @@ class FilesSizes (listFilesStr: List<String>) {
         for (fileStr in listFilesStr) {
             val tmpFile = File(fileStr)
             if (!tmpFile.exists())
-                throw IllegalArgumentException("File " + tmpFile.name + " is not exist")
+                throw IllegalArgumentException("File " + tmpFile.name + " does not exist")
 
             listFiles.add(tmpFile)
         }
     }
-    private fun getFileSize(file: File): Long {
+    fun getFileSize(file: File): Long {
 
         val listFiles = file.listFiles() ?: return file.length()
 
@@ -41,23 +38,16 @@ class FilesSizes (listFilesStr: List<String>) {
         return result
     }
 
-    private fun getSumSize(listFiles: Iterable<File>): Long {
+    fun getSumSize(listFiles: Iterable<File>): Long = listFiles.map { getFileSize(it) }.sum()
 
-        var result: Long = 0
-        for (file in listFiles) {
-            result += getFileSize(file)
-        }
 
-        return result
-    }
-
-    private fun convertToKB(bytes: Long): String {
+    fun convertToKB(bytes: Long): String {
         val conversionVal = standard
 
         return String.format("%.2f", bytes.toDouble() / conversionVal)
     }
 
-    private fun convertToReadable(bytes: Long): String {
+    fun convertToReadable(bytes: Long): String {
         val conversionVal = standard
 
         var kBytes = bytes.toDouble() / conversionVal
@@ -74,20 +64,20 @@ class FilesSizes (listFilesStr: List<String>) {
         return String.format("%.2f", kBytes) + prefix[index]
     }
 
+    fun display(isCommon: Boolean) {
+        val sumFile = "Common size: " + getConvertSize(getSumSize(listFiles))
 
-    val eachFile: String
-        get() {
-            val strBuff = StringBuilder()
-            for (file in listFiles)
-                strBuff.append(String.format("%1$-40s", file.name)).append(getConvertSize(getFileSize(file))).append('\n')
+        val eachFile = StringBuilder()
+        for (file in listFiles)
+            eachFile.append(String.format("%1$-40s", file.name)).append(getConvertSize(getFileSize(file))).append('\n')
 
-            return strBuff.toString()
-        }
+        if (isCommon)
+            println(sumFile)
+        else println(eachFile.toString())
 
-    val sumFile: String
-        get() = "Common size: " + getConvertSize(getSumSize(listFiles))
+    }
 
-    private fun getConvertSize(bytes: Long): String {
+    fun getConvertSize(bytes: Long): String {
         return if (readable) convertToReadable(bytes) else convertToKB(bytes)
     }
 }
@@ -112,24 +102,20 @@ object CommandLine {
 
         val clParser = DefaultParser()
         val commandLine: CommandLine
-        val arg = Scanner(System.`in`)
 
         try {
-            val y = arg.nextLine().split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            commandLine = clParser.parse(options, y)
-            val fSize = FilesSizes(commandLine.argList)
+            commandLine = clParser.parse(options, args)
 
-            fSize.standard = if (commandLine.hasOption("si")) 1000 else 1024
-            fSize.readable = commandLine.hasOption("h")
+            val standard = if (commandLine.hasOption("si")) 1000 else 1024
+            val readable = commandLine.hasOption("h")
+
+            val fSize = FilesSizes(commandLine.argList, readable, standard)
+
             val isCommon = commandLine.hasOption("c")
+            fSize.display(isCommon)
 
-            if (isCommon)
-                println(fSize.sumFile)
-            else
-                println(fSize.eachFile)
         } catch (e: Exception) {
             System.err.println(e.message)
-
             System.exit(1)
         }
     }
