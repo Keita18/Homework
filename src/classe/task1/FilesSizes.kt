@@ -63,16 +63,18 @@ class FilesSizes (listFilesStr: List<String>, private val readable: Boolean, pri
     }
 
     fun display(isCommon: Boolean) {
-        val sumFile = "Common size: " + getConvertSize(getSumSize(listFiles))
-
+        if (isCommon) {
+         val sumFile = "Common size: " + getConvertSize(getSumSize(listFiles))
+         println(sumFile)
+        }
+        else {
         val eachFile = StringBuilder()
         for (file in listFiles)
             eachFile.append(String.format("%1$-40s", file.name)).append(getConvertSize(getFileSize(file))).append('\n')
 
-        if (isCommon)
-            println(sumFile)
-        else println(eachFile.toString())
+        println(eachFile.toString())
 
+        }
     }
 
     fun getConvertSize(bytes: Long): String {
